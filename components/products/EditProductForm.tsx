@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Category, Color, Product, Size, Image} from "@prisma/client"
+import { Color, Product, Size, Image, Brand} from "@prisma/client"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -33,18 +33,18 @@ import ImageUpload from "../ImageUpload"
 interface ProductFormProps {
   singleProduct: Product 
   & {
-    image: Image[]
+    images: Image[]
 } | null;
-  categories: Category[];
+  brands: Brand[];
   colors: Color[];
   sizes: Size[];
 };
 
 const formSchema = z.object({
   name: z.string().min(1),
-  image: z.object({ url: z.string() }).array(),
+  images: z.object({ url: z.string() }).array(),
   price: z.coerce.number().min(1),
-  categoryId: z.string().min(1),
+  brandId: z.string().min(1),
   colorId: z.string().min(1),
   sizeId: z.string().min(1),
   isFeatured: z.boolean().default(false).optional(),
@@ -56,7 +56,7 @@ type ProductFormValues = z.infer<typeof formSchema>
 
 export const EditProductForm: React.FC<ProductFormProps> = ({
   singleProduct,
-  categories,
+  brands,
   sizes,
   colors
 }) => {
@@ -80,7 +80,7 @@ export const EditProductForm: React.FC<ProductFormProps> = ({
     sizeId: '',
     colorId: '',
     categoryId: '',
-    image: [],
+    images: [],
     isFeatured: false,
     isArchived: false,
   }
@@ -149,13 +149,13 @@ export const EditProductForm: React.FC<ProductFormProps> = ({
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
           <FormField
             control={form.control}
-            name="image"
+            name="images"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Images</FormLabel>
                 <FormControl>
                   <ImageUpload 
-                    value={field.value.map((image) => image.url)} 
+                    value={field?.value?.map((image) => image.url)} 
                     disabled={loading} 
                     onChange={(url) => field.onChange([...field.value, { url }])}
                     onRemove={(url) => field.onChange([...field.value.filter((current) => current.url !== url)])}
@@ -238,7 +238,7 @@ export const EditProductForm: React.FC<ProductFormProps> = ({
             />
              <FormField
               control={form.control}
-              name="categoryId"
+              name="brandId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category</FormLabel>
@@ -249,8 +249,8 @@ export const EditProductForm: React.FC<ProductFormProps> = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
+                      {brands.map((brand) => (
+                        <SelectItem key={brand.id} value={brand.id}>{brand.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>

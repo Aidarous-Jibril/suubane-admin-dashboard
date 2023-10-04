@@ -26,7 +26,7 @@ const CategoriesPage = async ({ params }: { params: { storeId: string }}) => {
         createdAt: format(item.createdAt, "MMMM do, yyyy")
     } ))
 
-    console.log("categories are", categories)
+    // console.log("categories are", categories)
   return (
     <div className='flex-1 space-y-4 p-8 pt-12'>
         <CategoriesListClient categoriesData={formattedCategories} />

@@ -11,17 +11,19 @@ datasource db {
 }
 
 model Store {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  name       String
-  userId     String
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  billboards Billboard[] // Relation to Billboard model
-  categories Category[] // Relation to Category model
-  sizes      Size[] // Relation to Size model
-  colors     Color[] // Relation to Color model
-  products   Product[] // Relation to Product model
-  Order      Order[]
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  userId        String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  billboards    Billboard[] // Relation to Billboard model
+  categories    Category[] // Relation to Category model
+  subcategories Subcategory[] // Relation to Subcategory model
+  Brand         Brand[] // Relation to Brand model
+  sizes         Size[] // Relation to Size model
+  colors        Color[] // Relation to Color model
+  products      Product[] // Relation to Product model
+  Order         Order[]
 }
 
 model Billboard {
@@ -36,15 +38,43 @@ model Billboard {
 }
 
 model Category {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  storeId     String    @db.ObjectId // relation scalar field  (used in the `@relation` attribute above)
-  store       Store     @relation(fields: [storeId], references: [id])
-  billboardId String    @db.ObjectId // relation scalar field  (used in the `@relation` attribute above)
-  billboard   Billboard @relation(fields: [billboardId], references: [id])
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  products    Product[] // Relation to Product model
+  storeId     String        @db.ObjectId // relation scalar field  (used in the `@relation` attribute above)
+  store       Store         @relation(fields: [storeId], references: [id])
+  billboardId String        @db.ObjectId // relation scalar field  (used in the `@relation` attribute above)
+  billboard   Billboard     @relation(fields: [billboardId], references: [id])
+  Subcategory Subcategory[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  // products    Product[] // Relation to Product model
+}
+
+// Define the Subcategory model
+model Subcategory {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  storeId    String   @db.ObjectId // relation scalar field  (used in the `@relation` attribute above)
+  store      Store    @relation(fields: [storeId], references: [id])
+  categoryId String   @db.ObjectId // relation scalar field  (used in the `@relation` attribute above)
+  category   Category @relation(fields: [categoryId], references: [id])
+  Brand      Brand[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// Define the Brand model
+model Brand {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  storeId       String      @db.ObjectId // relation scalar field  (used in the `@relation` attribute above)
+  store         Store       @relation(fields: [storeId], references: [id])
+  subcategoryId String      @db.ObjectId // relation scalar field  (used in the `@relation` attribute above)
+  subcategory   Subcategory @relation(fields: [subcategoryId], references: [id])
+  // categoryId    String?     @db.ObjectId
+  products      Product[] // Relation to Product model  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }
 
 model Size {
@@ -73,8 +103,8 @@ model Product {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
   storeId    String      @db.ObjectId
   store      Store       @relation(fields: [storeId], references: [id])
-  categoryId String      @db.ObjectId
-  category   Category    @relation(fields: [categoryId], references: [id])
+  brandId    String      @db.ObjectId
+  brand      Brand       @relation(fields: [brandId], references: [id])
   sizeId     String      @db.ObjectId
   size       Size        @relation(fields: [sizeId], references: [id])
   colorId    String      @db.ObjectId
@@ -83,10 +113,10 @@ model Product {
   price      Int
   isFeatured Boolean     @default(false)
   isArchived Boolean     @default(false)
-  image      Image[] // Relation to Image model
   OrderItem  OrderItem[] // Relation to OrderItem model
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
+  images     Image[] // 
 }
 
 model Image {

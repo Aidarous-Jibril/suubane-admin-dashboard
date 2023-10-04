@@ -1,8 +1,5 @@
 "use client"
 
-// global imports
-// import { ObjectId } from 'mongodb';
-
 import * as z from "zod"
 import axios from "axios"
 import { useState } from "react"
@@ -26,7 +23,7 @@ import AlertModal from "@/components/modals/AlertModal"
 import CustomHeadings from "@/components/CustomHeadings"
 import { Select, SelectItem, SelectTrigger } from "@/components/ui/select"
 import { SelectContent, SelectValue } from "@radix-ui/react-select"
-import { Category, Color, Image, Product, Size } from "@prisma/client"
+import { Brand,  Color, Product, Size } from "@prisma/client"
 import ImageUpload from "../ImageUpload"
 import { Checkbox } from "../ui/checkbox"
 
@@ -36,7 +33,7 @@ interface ProductFormProps {
   //   images: Image[]
   // } | null
   // images: Image[]
-  categories: Category[] | null
+  brands: Brand[] | null
   sizes: Size[] | null
   colors: Color[] | null
 };
@@ -49,7 +46,7 @@ const formSchema = z.object({
   price: z.coerce.number().min(1),
   sizeId: z.string().min(1),
   colorId: z.string().min(1),
-  categoryId: z.string().min(1),
+  brandId: z.string().min(1),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
 });
@@ -57,7 +54,7 @@ const formSchema = z.object({
 type ProductFormValues = z.infer<typeof formSchema>
 
 
-export default function CreateProductForm({  categories, sizes, colors}: ProductFormProps) {
+export default function CreateProductForm({  brands, sizes, colors}: ProductFormProps) {
   const params = useParams();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -71,7 +68,7 @@ export default function CreateProductForm({  categories, sizes, colors}: Product
       price: 0,
       sizeId: '',
       colorId: '',
-      categoryId: '',
+      brandId: '',
       isFeatured: false,
       isArchived: false,
     }
@@ -85,7 +82,7 @@ export default function CreateProductForm({  categories, sizes, colors}: Product
       router.push(`/${params.storeId}/products`);
       toast.success("Product created.");
     } catch (error: any) {
-      toast.error('Something went wrong.');
+      toast.error('Something went wrong. Ensure that all requirements are met');
     } finally {
       setLoading(false);
     }
@@ -260,7 +257,7 @@ export default function CreateProductForm({  categories, sizes, colors}: Product
                 />
                 <FormField
                   control={form.control}
-                  name="categoryId"
+                  name="brandId"
                   render={({ field }) => (
                     <FormItem>
                     <FormLabel>Category</FormLabel>
@@ -271,8 +268,8 @@ export default function CreateProductForm({  categories, sizes, colors}: Product
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {categories?.map((category) => (
-                          <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
+                        {brands?.map((brand) => (
+                          <SelectItem key={brand.id} value={brand.id}>{brand.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>

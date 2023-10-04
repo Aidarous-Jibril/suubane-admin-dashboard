@@ -25,7 +25,7 @@ const ProductsListClient = ({ productsData }: ProductsListProps) => {
     <>
       <div className='flex items-center justify-between'>
         <CustomHeadings 
-            title={`Products (${productsData.length})`}
+            title={`Products (${productsData?.length})`}
             description='Manage products for your store'
         />
 

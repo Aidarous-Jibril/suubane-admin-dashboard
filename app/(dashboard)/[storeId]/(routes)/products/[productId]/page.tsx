@@ -19,10 +19,9 @@ const EditCategoryPage = async ({
       id: new ObjectId(params.productId).toString()
     },
     include: {
-      image: true //to be checked
+      images: true //to be checked
     }
   });
-
 
   const sizes = await prismadb.size.findMany({
     where: {
@@ -36,18 +35,24 @@ const EditCategoryPage = async ({
     },
   });
 
-  const categories = await prismadb.category.findMany({
+  const brands = await prismadb.brand.findMany({
     where: {
       storeId: params.storeId,
     },
   });
 
+  console.log("Single Produc is", singleProduct)
   // console.log("Single Produc Imgs", singleProduct?.image[0])
 
     return ( 
       <div className="flex-col">
         <div className="flex-1 space-y-4 p-8 pt-6">
-          <EditProductForm singleProduct={singleProduct} sizes={sizes} colors={colors} categories={categories}   />
+          <EditProductForm 
+            singleProduct={singleProduct} 
+            sizes={sizes} 
+            colors={colors} 
+            brands={brands}  
+          />
         </div>
       </div>
     );

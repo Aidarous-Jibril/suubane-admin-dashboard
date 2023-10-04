@@ -24,14 +24,24 @@ const MainNav = ({
             active: pathName === `/${params.storeId}/settings`,
         },
         {
+            href: `/${params.storeId}/billboards`,
+            label: 'Billboards',
+            active: pathName === `/${params.storeId}/billboards`,
+        },
+        {
             href: `/${params.storeId}/categories`,
             label: 'Category',
             active: pathName === `/${params.storeId}/categories`,
         },
         {
-            href: `/${params.storeId}/billboards`,
-            label: 'Billboards',
-            active: pathName === `/${params.storeId}/billboards`,
+            href: `/${params.storeId}/subcategories`,
+            label: 'Subcat',
+            active: pathName === `/${params.storeId}/subcategories`,
+        },
+        {
+            href: `/${params.storeId}/brands`,
+            label: 'Brand',
+            active: pathName === `/${params.storeId}/brands`,
         },
         {
             href: `/${params.storeId}/sizes`,

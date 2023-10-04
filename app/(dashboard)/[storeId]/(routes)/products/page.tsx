@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import prismadb from '@/lib/prismadb'
 import { ProductColumnTypes } from './components/columns'
 import { formatter } from '@/lib/utils';
-import ProductsListClient from './components/CategoriesListClient';
+import ProductsListClient from './components/ProductsListClient';
 
 
 const ProductsPage = async ({ params }: { params: { storeId: string }}) => {
@@ -17,7 +17,7 @@ const ProductsPage = async ({ params }: { params: { storeId: string }}) => {
         include: {
             size: true,
             color: true,
-            category: true,
+            brand: true,
         },
         orderBy: {  createdAt: 'desc' }
     })
@@ -30,13 +30,13 @@ const ProductsPage = async ({ params }: { params: { storeId: string }}) => {
         price: formatter.format(item.price),
         size: item.size.name,
         color: item.color.value,
-        category: item.category.name,
+        brand: item.brand.name,
         isFeatured: item.isFeatured,
         isArchived: item.isArchived,
         createdAt: format(item.createdAt, "MMMM do, yyyy")
     } ))
 
-    console.log("categories are", products)
+    console.log("products are", products)
   return (
     <div className='flex-1 space-y-4 p-8 pt-12'>
         <ProductsListClient productsData={formattedProducts} />

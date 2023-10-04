@@ -25,43 +25,44 @@ import AlertModal from "@/components/modals/AlertModal"
 import CustomHeadings from "@/components/CustomHeadings"
 import { Select, SelectItem, SelectTrigger } from "@/components/ui/select"
 import { SelectContent, SelectValue } from "@radix-ui/react-select"
-import { Billboard } from "@prisma/client"
+import { Billboard, Category } from "@prisma/client"
 
 
-interface CategoryFormProps {
-  initialData: Billboard[] | null
+interface SubCategoryFormProps {
+  // initialData: Category | null;
+  initialData: Category[] | null
 };
 
 // form schema
 const formSchema = z.object({
   name: z.string().min(1),
-  billboardId: z.string().min(1),
+  categoryId: z.string().min(1),
 });
 
-type CategoryFormValues = z.infer<typeof formSchema>
+type SubCategoryFormValues = z.infer<typeof formSchema>
 
 
-export default function CreateCategoryForm({initialData}: CategoryFormProps) {
+export default function CreateSubCategoryForm({initialData}: SubCategoryFormProps) {
   const params = useParams();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const form = useForm<CategoryFormValues>({
+  const form = useForm<SubCategoryFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues:  {
       name: '',
-      billboardId: ''
+      categoryId: ''
     }
   });
 
 
-  const onSubmit = async (data: CategoryFormValues) => {
+  const onSubmit = async (data: SubCategoryFormValues) => {
     try {
-      await axios.post(`/api/${params.storeId}/categories`, data);
+      await axios.post(`/api/${params.storeId}/subcategories`, data);
       router.refresh();
-      router.push(`/${params.storeId}/categories`);
-      toast.success("Category created.");
+      router.push(`/${params.storeId}/subcategories`);
+      toast.success("Sub Category created.");
     } catch (error: any) {
       toast.error('Something went wrong.');
     } finally {
@@ -72,12 +73,12 @@ export default function CreateCategoryForm({initialData}: CategoryFormProps) {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/categories/${params.billboardId}`);
+      await axios.delete(`/api/${params.storeId}/subcategories/${params.subcategoryId}`);
       router.refresh();
-      router.push(`/${params.storeId}/categories`);
-      toast.success('Category deleted.');
+      router.push(`/${params.storeId}/subcategories`);
+      toast.success('Sub Category deleted.');
     } catch (error: any) {
-      toast.error('Make sure you removed all products belonging this category first.');
+      toast.error('Make sure you removed all products belonging this subcategory first.');
     } finally {
       setLoading(false);
       setOpen(false);
@@ -95,14 +96,6 @@ export default function CreateCategoryForm({initialData}: CategoryFormProps) {
         />
         <div className="flex items-center justify-between">
             <CustomHeadings title="Create Category ." description="Add a new category" />
-              {/* <Button
-                disabled={loading}
-                variant="destructive"
-                size="sm"
-                onClick={() => setOpen(true)}
-              >
-                <Trash className="h-4 w-4" />
-              </Button> */}
           </div>
           <Separator />
           <Form {...form}>
@@ -123,19 +116,19 @@ export default function CreateCategoryForm({initialData}: CategoryFormProps) {
                 />
                 <FormField
                   control={form.control}
-                  name="billboardId"
+                  name="categoryId"
                   render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Billboard</FormLabel>
+                    <FormLabel>Parent Category</FormLabel>
                     <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue defaultValue={field.value} placeholder="Select a billboard" />
+                          <SelectValue defaultValue={field.value} placeholder="Select a parent category" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {initialData?.map((billboard) => (
-                          <SelectItem key={billboard.id} value={billboard.id}>{billboard.label}</SelectItem>
+                        {initialData?.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
